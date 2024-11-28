@@ -1,0 +1,9 @@
+{:description "FIXME: my new application."
+ :transform
+ [["build" ""
+   {"build.tmpl" "build.clj"
+    "deps.tmpl"  "deps.edn"}]
+  ["src" "src/{{top/file}}"
+   {"main.tmpl" "{{main/file}}.clj"}]
+  ["test" "test/{{top/file}}"
+   {"main_test.tmpl" "{{main/file}}_test.clj"}]]}
