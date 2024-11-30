@@ -32,11 +32,11 @@ Run the project, overriding the name to be greeted:
 
 Run the project's tests (they'll fail until you edit them):
 
-    $ clojure -T:build test
+    clojure -T:build test
 
 Run the project's CI pipeline and build an uberjar (this will fail until you edit the tests to pass):
 
-    $ clojure -T:build ci
+    clojure -T:build ci
 
 This will produce an updated `pom.xml` file with synchronized dependencies inside the `META-INF`
 directory inside `target/classes` and the uberjar in `target`. You can update the version (and SCM tag)
@@ -48,7 +48,7 @@ from `build.clj`.
 
 Run that uberjar:
 
-    $ java -jar target/{{group/id}}/{{artifact/id}}-{{version}}.jar
+    java -jar target/{{group/id}}/{{artifact/id}}-{{version}}.jar
 
 ## Options
 
@@ -63,7 +63,9 @@ FIXME: listing of options this app accepts.
 ...
 
 ### Any Other Sections
+
 ### That You Think
+
 ### Might be Useful
 
 ## License

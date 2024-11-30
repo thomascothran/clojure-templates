@@ -4,6 +4,9 @@
    {"build.tmpl" "build.clj"
     "deps.tmpl"  "deps.edn"}]
   ["src" "src/{{top/file}}"
-   {"main.tmpl" "{{main/file}}.clj"}]
+   {"main.tmpl" "{{main/file}}.clj"
+    "server.tmpl" "{{main/file}}.server.clj"
+    "app.tmpl" "{{main/file}}"
+    "logging.tmpl" "{{main/file}}.logging.clj"}]
   ["test" "test/{{top/file}}"
    {"main_test.tmpl" "{{main/file}}_test.clj"}]]}

@@ -1,14 +1,28 @@
 {:paths ["src" "resources"]
- :deps {org.clojure/clojure {:mvn/version "1.12.0"}}
+ :deps {migratus/migratus {:mvn/version "1.6.3"}
+        org.clojure/clojure {:mvn/version "1.12.0"}
+        metosin/malli {:mvn/version "0.16.4"}
+        metosin/reitit {:mvn/version "0.7.2"}
+        info.sunng/ring-jetty9-adapter {:mvn/version "0.36.0"}
+        aero/aero {:mvn/version "1.1.6"}
+        com.stuartsierra/component {:mvn/version "1.1.0"}
+        hikari-cp/hikari-cp {:mvn/version "3.1.0"}
+        com.github.seancorfield/next.jdbc {:mvn/version "1.3.955"}
+        dev.onionpancakes/chassis {:mvn/version "1.0.365"}
+        org.postgresql/postgresql {:mvn/version "42.7.4"}
+        com.brunobonacci/mulog {:mvn/version "0.9.0"}
+        com.widdindustries/time-literals {:mvn/version "0.1.10"}}
  :aliases
- {:run-m {:main-opts ["-m" "{{top/ns}}.{{main/ns}}"]}
-  :run-x {:ns-default {{top/ns}}.{{main/ns}}
-          :exec-fn greet
-          :exec-args {:name "Clojure"}}
+ {:run-m {:main-opts ["-m" "{{top/ns}}.{{main/ns}}.main"]}
   :build {:deps {io.github.clojure/tools.build
                  {:mvn/version "0.10.5"}}
           :ns-default build}
-  :test {:extra-paths ["test"]
+  :dev {:extra-deps {org.clojure/clojurescript {:mvn/version "1.11.54"}
+                     thheller/shadow-cljs {:mvn/version "2.28.18"}}
+        :extra-paths ["dev" "dev-resources"]}
+  :nrepl {:extra-deps {nrepl/nrepl {:mvn/version "1.2.0"}
+                       cider/piggieback {:mvn/version "0.4.2"}}}
+  :test {:extra-paths ["test" "test-resources"]
          :extra-deps {org.clojure/test.check {:mvn/version "1.1.1"}
-                      io.github.cognitect-labs/test-runner
-                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}}}}
+                      lambdaisland/kaocha {:mvn/version "1.91.1392"}}
+         :exec-fn kaocha.runner/exec-fn}}}

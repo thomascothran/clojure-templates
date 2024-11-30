@@ -1,0 +1,12 @@
+(ns {{top/ns}}.ulog
+  (:require [com.brunobonacci.mulog :as u]))
+
+(defrecord Component [publisher-opts]
+  (start [{:keys [publisher-opts]}]
+    {:publishers (mapv u/start-publisher! publisher-opts)})
+  (stop [{:keys [publishers]}]
+    (doseq [publisher publishers]
+      (publisher))))
+
+(defn make-component
+  [{:ulog/keys [publisher-opts]}])
