@@ -4,5 +4,9 @@
  :builds {:app {:target :browser
                 :output-dir "public/assets/app/compiled-js"
                 :asset-path "/assets/app/compiled-js"
-                :modules {:main {:init-fn {{top/ns}} .app/init}}
-                :devtools {:watch-dir "public"}}}}
+                :modules {:main {:init-fn {{top/ns}}.app/init}}
+                :devtools {:watch-dir "public"}}
+          :test {:target    :node-test
+                 :output-to "out/node-tests.js"
+                 :ns-regexp "-test$"
+                 :autorun   true}}}

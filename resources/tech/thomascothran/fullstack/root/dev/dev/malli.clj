@@ -6,7 +6,7 @@
 (defrecord Component []
   c/Lifecycle
   (start []
-    (dev/start! {:report (pretty/reporter)}))
+    (dev/start! {:report (pretty/thrower)}))
   (stop []
     (dev/stop!)))
 
