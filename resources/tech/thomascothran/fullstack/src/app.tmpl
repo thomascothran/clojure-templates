@@ -1,4 +1,15 @@
-(ns {{top/ns}}.app)
+(ns {{top/ns}}.app
+ (:require [com.stuartsierra.component :as c]
+           [tech.thomascothran.fullstack.server :as server]
+           [tech.thomascothran.fullstack.logging :as logging])
+ (:gen-class))
 
-(defn init []
-  (println "Hello World"))
+(def system
+  (c/system-map
+    :server (server/component {:hot-reload true :port 3333})
+    :logging (logging/make-component {:publisher-opts [{:type :console}]})))
+
+(defn -main [& args]
+  (println "starting...")
+  (compontn/start system)
+  @(promise))
