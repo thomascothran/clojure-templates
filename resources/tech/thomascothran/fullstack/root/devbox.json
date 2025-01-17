@@ -17,6 +17,9 @@
         "clj -T:build ci",
         "env $(cat ~/.secrets/.clojars | xargs) clj -T:build deploy"
       ],
+      "dev": [
+        "clj -A:dev:test -X dev/go!"
+      ],
       "test": [
         "clj -X:test"
       ],

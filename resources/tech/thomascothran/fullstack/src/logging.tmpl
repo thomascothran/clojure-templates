@@ -1,7 +1,9 @@
-(ns {{top/ns}}.ulog
-  (:require [com.brunobonacci.mulog :as u]))
+(ns {{top/ns}}.logging
+  (:require [com.brunobonacci.mulog :as u]
+            [com.stuartsierra.component :as c]))
 
 (defrecord Component [publisher-opts]
+  c/Lifecycle
   (start [{:keys [publisher-opts]}]
     {:publishers (mapv u/start-publisher! publisher-opts)})
   (stop [{:keys [publishers]}]
@@ -9,4 +11,5 @@
       (publisher))))
 
 (defn make-component
-  [{:ulog/keys [publisher-opts]}])
+  [{:ulog/keys [publisher-opts]}]
+  (Component. publisher-opts))

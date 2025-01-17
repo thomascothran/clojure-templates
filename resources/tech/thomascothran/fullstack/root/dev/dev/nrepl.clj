@@ -5,7 +5,7 @@
             [shadow.cljs.devtools.server.nrepl :as shadow-nrepl]))
 
 (defn start-nrepl!
-  [{:keys [port]  :as c}]
+  [{:keys [port] :as c}]
   (spit ".nrepl-port" port)
   (println "starting nrepl on port " port)
   (assoc c :nrepl/server
@@ -13,11 +13,15 @@
           :handler (nrepl/default-handler #'shadow-nrepl/middleware #'p/wrap-cljs-repl)
           :port port)))
 
-(defrecord Component []
+(defrecord Component [port]
   c/Lifecycle
-  (start [c] (start-nrepl! c) c)
+  (start [c]
+    (println "about to call start with " c)
+    (start-nrepl! c))
   (stop [_]))
 
 (defn make-component
   [{:nrepl/keys [port]}]
-  (map->Component {:port port}))
+  (assert port)
+  (println "Making nrepl component")
+  (Component. port))

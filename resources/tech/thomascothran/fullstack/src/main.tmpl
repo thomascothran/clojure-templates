@@ -1,12 +1,15 @@
-(ns {{top/ns}}.{{main/ns}}
-  (:gen-class))
+(ns {{top/ns}}.app
+ (:require [com.stuartsierra.component :as c]
+           [tech.thomascothran.fullstack.server :as server]
+           [tech.thomascothran.fullstack.logging :as logging])
+ (:gen-class))
 
-(defn greet
-  "Callable entry point to the application."
-  [data]
-  (println (str "Hello, " (or (:name data) "World") "!")))
+(def system
+  (c/system-map
+    :server (server/component {:hot-reload true :port 3333})
+    :logging (logging/make-component {:publisher-opts [{:type :console}]})))
 
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (greet {:name (first args)}))
+(defn -main [& args]
+  (println "starting...")
+  (compontn/start system)
+  @(promise))

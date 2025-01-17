@@ -14,14 +14,50 @@
     ;      [reitit.ring.middleware.dev :as dev]
            [reitit.ring.spec :as spec]
     ;      [spec-tools.spell :as spell]
-           [ring.adapter.jetty :as jetty]
+           [ring.adapter.jetty9 :as jetty]
            [muuntaja.core :as m]
            [clojure.java.io :as io]
-           [com.stuartsierra.component :as c]]
+           [com.stuartsierra.component :as c]
            [malli.util :as mu]))
 
+(defn- coercion
+  [_]
+  (reitit.coercion.malli/create
+    {;; set of keys to include in error messages
+     :error-keys #{#_:type :coercion :in :schema :value :errors :humanized #_:transformed}
+     ;; schema identity function (default: close all map schemas)
+     :compile mu/closed-schema
+     ;; strip-extra-keys (affects only predefined transformers)
+     :strip-extra-keys true
+     ;; add/set default values
+     :default-values true
+     ;; malli options
+     :options nil}))
+
+(defn- middleware
+  [_]
+  [;; swagger & openapi
+   swagger/swagger-feature
+   openapi/openapi-feature
+   ;; query-params & form-params
+   parameters/parameters-middleware
+   ;; content-negotiation
+   muuntaja/format-negotiate-middleware
+   ;; encoding response body
+   muuntaja/format-response-middleware
+   ;; exception handling
+   exception/exception-middleware
+   ;; decoding request body
+   muuntaja/format-request-middleware
+   ;; coercing response bodys
+   coercion/coerce-response-middleware
+   ;; coercing request parameters
+   coercion/coerce-request-middleware
+   ;; multipart
+   multipart/multipart-middleware])
+
 (defn make-handler
-  [_] ;; add app routes here
+  [m] ;; add app routes here
   (ring/ring-handler
     (ring/router
       [["/assets/*" (ring/create-resource-handler)] ]
@@ -30,37 +66,9 @@
        :validate spec/validate ;; enable spec validation for route data
        ;;:reitit.spec/wrap spell/closed ;; strict top-level validation
        :exception pretty/exception
-       :data {:coercion (reitit.coercion.malli/create
-                          {;; set of keys to include in error messages
-                           :error-keys #{#_:type :coercion :in :schema :value :errors :humanized #_:transformed}
-                           ;; schema identity function (default: close all map schemas)
-                           :compile mu/closed-schema
-                           ;; strip-extra-keys (affects only predefined transformers)
-                           :strip-extra-keys true
-                           ;; add/set default values
-                           :default-values true
-                           ;; malli options
-                           :options nil})
+       :data {:coercion (coercion m)
               :muuntaja m/instance
-              :middleware [;; swagger & openapi
-                           swagger/swagger-feature
-                           openapi/openapi-feature
-                           ;; query-params & form-params
-                           parameters/parameters-middleware
-                           ;; content-negotiation
-                           muuntaja/format-negotiate-middleware
-                           ;; encoding response body
-                           muuntaja/format-response-middleware
-                           ;; exception handling
-                           exception/exception-middleware
-                           ;; decoding request body
-                           muuntaja/format-request-middleware
-                           ;; coercing response bodys
-                           coercion/coerce-response-middleware
-                           ;; coercing request parameters
-                           coercion/coerce-request-middleware
-                           ;; multipart
-                           multipart/multipart-middleware]}})
+              :middleware (middleware m)}})
     (ring/routes
       (swagger-ui/create-swagger-ui-handler
         {:path "/"
@@ -72,28 +80,26 @@
       (ring/create-default-handler))))
 
 (defn start [{:keys [hot-reload port]
-              :or   {port 3333}
               :as c}] 
+  (assert port)
   (let [prod-router (make-handler c)
         handler (fn [req]
                    (if hot-reload
                      ((make-handler c) req)
                      (prod-router req)))]
     (println "starting server running in port " port)
-    (jetty/run-jetty handler
-                     {:port port, :join? false})))
+    (jetty/run-jetty handler {:port port :join? false})))
 
-(comment
-  (start))
 
 (defrecord Component [port hot-reload]
   c/Lifecycle
   (start [c]
     {:port port
-     :server (start c)})
+     :server (start {:port port :hot-reload hot-reload})})
   (stop [c]
     (some-> (get c :server) (.close))))
 
 (defn make-component
-  [{:server/keys [port hot-reload]}]
-  (Component. port hot-reload)
+  [{:keys [port hot-reload]}]
+  (assert port)
+  (Component. port hot-reload))

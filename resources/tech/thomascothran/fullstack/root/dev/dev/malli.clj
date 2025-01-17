@@ -3,13 +3,13 @@
             [malli.dev.pretty :as pretty]
             [com.stuartsierra.component :as c]))
 
-(defrecord Component []
+(defrecord Component [_]
   c/Lifecycle
-  (start []
+  (start [_]
     (dev/start! {:report (pretty/thrower)}))
-  (stop []
+  (stop [_]
     (dev/stop!)))
 
 (defn make-component
-  []
-  (Component.))
+  [m]
+  (Component. m))
