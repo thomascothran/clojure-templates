@@ -6,6 +6,7 @@
   ["src" "src/{{top/file}}"
    {"main.tmpl" "main.clj"
     "server.tmpl" "server.clj"
+    "app.tmpl" "app.cljs"
     "logging.tmpl" "logging.clj"}]
   ["test" "test/{{top/file}}"
    {"main_test.tmpl" "main_test.clj"}]]}

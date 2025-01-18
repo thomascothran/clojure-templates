@@ -5,10 +5,12 @@
 
 (defrecord Component [_]
   c/Lifecycle
-  (start [_]
-    (dev/start! {:report (pretty/thrower)}))
-  (stop [_]
-    (dev/stop!)))
+  (start [c]
+    (dev/start! {:report (pretty/thrower)})
+    c)
+  (stop [c]
+    (dev/stop!)
+    c))
 
 (defn make-component
   [m]

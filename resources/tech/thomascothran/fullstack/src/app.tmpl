@@ -1,0 +1,7 @@
+(ns {{top/ns}}.app)
+
+(defn init []
+  (let [el (js/document.createElement "div")
+        _ (set! (.-textContent el) "hello world")]
+    (js/document.body.appendChild el)))
+
